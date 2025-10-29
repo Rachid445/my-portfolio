@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Github, Linkedin, Mail, ArrowRight, Terminal, Code, Database, Cpu, Webhook } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowRight, Code, Database, Cpu, Webhook } from 'lucide-react';
 
 export default function Portfolio() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const fullText = "Data Analyst Student";
@@ -41,16 +40,26 @@ export default function Portfolio() {
     if (!canvas || isLoading) return;
 
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particles = [];
+    const particles: Particle[] = [];
     const particleCount = 80;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
 
     class Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * canvasWidth;
+        this.y = Math.random() * canvasHeight;
         this.vx = (Math.random() - 0.5) * 0.5;
         this.vy = (Math.random() - 0.5) * 0.5;
         this.size = Math.random() * 2 + 1;
@@ -60,11 +69,12 @@ export default function Portfolio() {
         this.x += this.vx;
         this.y += this.vy;
 
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        if (this.x < 0 || this.x > canvasWidth) this.vx *= -1;
+        if (this.y < 0 || this.y > canvasHeight) this.vy *= -1;
       }
 
       draw() {
+        if (!ctx) return;
         ctx.fillStyle = 'rgba(0, 200, 255, 0.5)';
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -77,6 +87,7 @@ export default function Portfolio() {
     }
 
     function connectParticles() {
+      if (!ctx) return;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -95,9 +106,10 @@ export default function Portfolio() {
       }
     }
 
-    let animationId;
+    let animationId: number;
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       
       particles.forEach(particle => {
         particle.update();
@@ -111,6 +123,7 @@ export default function Portfolio() {
     animate();
 
     const handleResize = () => {
+      if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
@@ -124,12 +137,11 @@ export default function Portfolio() {
   }, [isLoading]);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
     
     const handleScroll = () => {
-      setScrollY(window.scrollY);
       setShowScrollTop(window.scrollY > 500);
     };
 
@@ -146,14 +158,14 @@ export default function Portfolio() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('Message sent successfully! 🎉');
     setFormData({ name: '', email: '', message: '' });
     setTimeout(() => setFormStatus(''), 3000);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -313,7 +325,7 @@ export default function Portfolio() {
             <div className="grid md:grid-cols-2 gap-12 md:gap-16">
               <div className="space-y-6">
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-                  I'm a second-year Data Analytics student at <span className="text-cyan-400 font-semibold">Faculty of Applied Sciences - Ait Melloul, Agadir</span>. 
+                  I&apos;m a second-year Data Analytics student at <span className="text-cyan-400 font-semibold">Faculty of Applied Sciences - Ait Melloul, Agadir</span>. 
                   My passion lies in transforming data into actionable insights and building innovative solutions.
                 </p>
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">
@@ -473,17 +485,17 @@ export default function Portfolio() {
                     complex datasets.
                   </p>
                   <p className="text-base md:text-lg">
-                    As a data analytics student, I've witnessed firsthand how machine learning algorithms can identify patterns 
+                    As a data analytics student, I&apos;ve witnessed firsthand how machine learning algorithms can identify patterns 
                     that would take humans days or weeks to discover. Tools like TensorFlow, PyTorch, and scikit-learn are 
                     democratizing access to powerful AI capabilities.
                   </p>
                   <p className="text-base md:text-lg">
                     The integration of AI with IoT devices is particularly exciting. Imagine sensors collecting real-time data, 
-                    with AI models processing it on the edge to make instant decisions. This is the future we're building in 
+                    with AI models processing it on the edge to make instant decisions. This is the future we&apos;re building in 
                     our Smart Tech Robotics & AI Club.
                   </p>
                   <p className="text-base md:text-lg">
-                    Whether you're interested in computer vision, NLP, or predictive analytics, now is the perfect time to dive 
+                    Whether you&apos;re interested in computer vision, NLP, or predictive analytics, now is the perfect time to dive 
                     into AI. The tools are mature, the community is supportive, and the possibilities are endless.
                   </p>
                 </div>
@@ -509,8 +521,8 @@ export default function Portfolio() {
 
             <div className="max-w-3xl">
               <p className="text-lg sm:text-xl md:text-2xl text-gray-400 mb-8 md:mb-12 font-light">
-                I'm currently open to new opportunities and collaborations. 
-                Feel free to reach out if you'd like to work together.
+                I&apos;m currently open to new opportunities and collaborations. 
+                Feel free to reach out if you&apos;d like to work together.
               </p>
 
               {/* Contact Form */}
@@ -551,7 +563,7 @@ export default function Portfolio() {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
-                    rows="5"
+                    rows={5}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-800 text-white focus:border-cyan-400 focus:outline-none transition-colors font-mono resize-none"
                     placeholder="Your message..."
                   ></textarea>
