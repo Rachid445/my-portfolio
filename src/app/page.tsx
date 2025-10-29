@@ -343,7 +343,7 @@ export default function Portfolio() {
                   <h3 className="text-xl md:text-2xl font-mono text-cyan-400 mb-2">Education</h3>
                   <p className="text-lg font-semibold text-white">Bachelor in Data Analytics</p>
                   <p className="text-gray-400">Faculty of Applied Sciences</p>
-                  <p className="text-gray-500 text-sm">Ait Melloul, Agadir • 2024gi - Present</p>
+                  <p className="text-gray-500 text-sm">Ait Melloul, Agadir • 2024 - Present</p>
                   <p className="text-gray-300 mt-2">Currently in 2nd year</p>
                 </div>
 
